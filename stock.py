@@ -1,8 +1,14 @@
+import sys
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from pdf_parser.pdf_parser import *
 from ventana_scrolleable import *
 from admin_pedido.admin_pedido import *
+
+if getattr(sys, 'frozen', False):
+    app_dir = os.path.dirname(sys.executable)
+    os.chdir(app_dir)
+    sys.path.append(app_dir)
 
 def descontar_faltante(entrada, codigo, razon_social, nro_orden, faltantes_producto, etiqueta):
     stock = entrada.get()

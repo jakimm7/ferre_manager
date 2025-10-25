@@ -1,11 +1,11 @@
 import csv
 import os
 
-RUTA_TOTALES = "./bdd/pedidos_totales.csv"
-NOM_GENERICO = "./bdd/pedido"
-AUX = "./bdd/aux.csv"
+RUTA_TOTALES = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/pedidos_totales.csv"
+NOM_GENERICO = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/pedido"
+AUX = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/aux.csv"
 EXTENSION = ".csv"
-MODIFICADO = "./bdd/modificado.csv"
+MODIFICADO = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/modificado.csv"
 MODO_LECTURA = "r"
 MODO_ESCRITURA = "w"
 
