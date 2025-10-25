@@ -4,11 +4,11 @@ import csv
 import os
 import random
 
-RUTA = "./bdd/pedido"
-RUTA_CLIENTES = "./bdd/pedidos_totales.csv"
+RUTA = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/pedido"
+RUTA_CLIENTES = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/pedidos_totales.csv"
 EXTENSION_CSV = ".csv"
-AUX = "./bdd/auxiliar.csv"
-AUX2 = "./bdd/auxiliar2.csv"
+AUX = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/auxiliar.csv"
+AUX2 = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/auxiliar2.csv"
 
 MODO_LECTURA = "r"
 MODO_ESCRITURA = "w"
