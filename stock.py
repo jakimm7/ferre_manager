@@ -1,4 +1,3 @@
-import sys
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from pdf_parser.pdf_parser import *
@@ -114,6 +113,7 @@ def adjuntar_archivo(archivos_seleccionados):
 
 def handler_procesos(archivos, manager, window, carga_archivos):
     pedidos = []
+    cargar_ordenes(pedidos)
 
     if carga_archivos:
         if len(archivos) == 0:
@@ -126,7 +126,6 @@ def handler_procesos(archivos, manager, window, carga_archivos):
         
         print(f"Han sido procesados {len(archivos)}")
     else:
-        cargar_ordenes(pedidos)
         if len(pedidos) == 0:
             messagebox.showwarning("Advertencia", "No hay pedidos cargados en el sistema")
             return

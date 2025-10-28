@@ -33,6 +33,8 @@ def leer_faltantes(razon_social, numero_orden):
         nombre_por_codigo = {}
         pedido_reader = csv.reader(pedido_file, delimiter=",")
         for pedido in pedido_reader:
+            if len(pedido) == 0:
+                continue
             codigo = int(pedido[CODIGO])
             nombre = pedido[PRODUCTO]
             cant_pedida = pedido[CANT_PEDIDA]
@@ -53,6 +55,8 @@ def administrar_faltantes(codigo_producto, unidades_faltantes, razon_social, num
             producto_encontrado = False
 
             for pedido in pedido_reader:
+                if len(pedido) == 0:
+                    continue
                 codigo = int(pedido[CODIGO])
                 producto = pedido[PRODUCTO]
                 stock = int(pedido[CANT_PEDIDA])
@@ -68,7 +72,7 @@ def administrar_faltantes(codigo_producto, unidades_faltantes, razon_social, num
                 os.remove(MODIFICADO)
                 return
 
-            os.rename(MODIFICADO, nombre_a_orden)
+            os.replace(MODIFICADO, nombre_a_orden)
             print("Pedido Modificado")
             return
 
@@ -79,6 +83,8 @@ def eliminar_ordenes(razon_social, nro_orden):
             totales_reader = csv.reader(totales_file, delimiter=',')
             aux_writer = csv.writer(aux_file, delimiter=',', lineterminator='\n')
             for pedido in totales_reader:
+                if len(pedido) == 0:
+                    continue
                 razon_actual = pedido[RAZON_SOCIAL]
                 orden_actual = pedido[ORDEN]
 
@@ -93,12 +99,14 @@ def eliminar_ordenes(razon_social, nro_orden):
         return
 
     os.remove(f"{NOM_GENERICO}_{razon_social}_{nro_orden}{EXTENSION}")
-    os.rename(AUX, RUTA_TOTALES)         
+    os.replace(AUX, RUTA_TOTALES)         
 
 def cargar_ordenes(clientes):
     with open(RUTA_TOTALES, MODO_LECTURA) as totales_file:
         totales_file_reader = csv.reader(totales_file, delimiter=',')
         for pedido in totales_file_reader:
+            if len(pedido) == 0:
+                continue
             cliente = pedido[RAZON_SOCIAL]
             orden = pedido[ORDEN]
             clientes.append((cliente, orden))
