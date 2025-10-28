@@ -5,11 +5,6 @@ from pdf_parser.pdf_parser import *
 from ventana_scrolleable import *
 from admin_pedido.admin_pedido import *
 
-if getattr(sys, 'frozen', False):
-    app_dir = os.path.dirname(sys.executable)
-    os.chdir(app_dir)
-    sys.path.append(app_dir)
-
 def descontar_faltante(entrada, codigo, razon_social, nro_orden, faltantes_producto, etiqueta):
     stock = entrada.get()
     total_pedido = faltantes_producto[codigo]
@@ -86,6 +81,11 @@ def mostrar_clientes(clientes, frame, widgets):
             mostrar_producto(frame, codigo, razon_social, nro_orden, nombre_por_codigo, faltante_productos, client_widgets)
             widgets[(razon_social, nro_orden)] = client_widgets
 
+def volver_menu_principal(frame, ventana):
+    frame.destroy()
+    ventana.destruir()
+    menu_principal()
+
 def handler_ordenes(clientes):
     ventana_scroll = VentanaScrollable("Pedidos Totales", 500, 600)
     scrollable_frame = ventana_scroll.get_frame()
@@ -95,7 +95,11 @@ def handler_ordenes(clientes):
     widgets = {}
 
     mostrar_clientes(clientes, scrollable_frame, widgets)
-            
+
+    volver_button = tk.Button(scrollable_frame, text="Volver", command=lambda frame=scrollable_frame, ventana=ventana_scroll: 
+                              volver_menu_principal(frame, ventana_scroll))
+    volver_button.pack(pady=5)
+
     return ventana_scroll
 
 def adjuntar_archivo(archivos_seleccionados):
@@ -133,7 +137,7 @@ def handler_procesos(archivos, manager, window, carga_archivos):
     manager.destruir()
     handler_ordenes(pedidos)
 
-def main():
+def menu_principal():    
     archivos_seleccionados = []
     manager = VentanaScrollable("Inicio", 600, 500)
     main_window = manager.get_frame()
@@ -154,6 +158,9 @@ def main():
     btn_cargar_pendientes.pack(pady=10)
 
     main_window.mainloop()
+
+def main():
+    menu_principal()
 
 if __name__ == "__main__":
     main()

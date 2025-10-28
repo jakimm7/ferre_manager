@@ -3,12 +3,20 @@ import re
 import csv
 import os
 import random
+import sys
 
-RUTA = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/pedido"
-RUTA_CLIENTES = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/pedidos_totales.csv"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__)) if not getattr(sys, 'frozen', False) else sys._MEIPASS
+BASE_DIR = os.path.abspath(os.path.dirname(sys.argv[0])) # Usar la ubicación real del .exe
+
+BDD_DIR = os.path.join(BASE_DIR, "bdd")
+os.makedirs(BDD_DIR, exist_ok=True)
+
+RUTA = os.path.join(BDD_DIR, "pedido")
+RUTA_CLIENTES = os.path.join(BDD_DIR, "pedidos_totales.csv")
+AUX = os.path.join(BDD_DIR, "auxiliar.csv")
+AUX2 = os.path.join(BDD_DIR, "auxiliar2.csv")
+
 EXTENSION_CSV = ".csv"
-AUX = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/auxiliar.csv"
-AUX2 = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/auxiliar2.csv"
 
 MODO_LECTURA = "r"
 MODO_ESCRITURA = "w"
@@ -63,6 +71,9 @@ def pedido_en_bdd(orden):
     with open(RUTA_CLIENTES, MODO_LECTURA_ESCRITURA) as pedidos_pendientes:
         pedidos_pendientes_reader = csv.reader(pedidos_pendientes, delimiter=',')
         for pedido in pedidos_pendientes_reader:
+            if len(pedido) == 0:
+                break
+            
             if pedido[NRO_ORDEN] == orden:
                 print("Pedido ya cargado")
                 return True

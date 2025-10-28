@@ -1,11 +1,20 @@
 import csv
 import os
+import sys
 
-RUTA_TOTALES = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/pedidos_totales.csv"
-NOM_GENERICO = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/pedido"
-AUX = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/aux.csv"
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__)) if not getattr(sys, 'frozen', False) else sys._MEIPASS
+BASE_DIR = os.path.abspath(os.path.dirname(sys.argv[0]))
+
+BDD_DIR = os.path.join(BASE_DIR, "bdd")
+os.makedirs(BDD_DIR, exist_ok=True)
+
+NOM_GENERICO = os.path.join(BDD_DIR, "pedido") # Prefijo para archivos de pedidos individuales
+RUTA_TOTALES = os.path.join(BDD_DIR, "pedidos_totales.csv")
+AUX = os.path.join(BDD_DIR, "aux.csv")
+MODIFICADO = os.path.join(BDD_DIR, "modificado.csv")
+
 EXTENSION = ".csv"
-MODIFICADO = "/home/jakim7/Documentos/Archivos Santi/stock_ferre/bdd/modificado.csv"
 MODO_LECTURA = "r"
 MODO_ESCRITURA = "w"
 
