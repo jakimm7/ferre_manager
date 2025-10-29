@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from pdf_parser.pdf_parser import *
-from ventana_scrolleable import *
+from ventana_manager.ventana_scrolleable import *
 from admin_pedido.admin_pedido import *
 
 def descontar_faltante(entrada, codigo, razon_social, nro_orden, faltantes_producto, etiqueta, widgets):
