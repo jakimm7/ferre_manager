@@ -67,14 +67,14 @@ def administrar_faltantes(codigo_producto, unidades_faltantes, razon_social, num
             
                 modificado_writer.writerow([codigo, producto, stock])
 
-            if not producto_encontrado:
-                print("ERROR: Producto no encontrado en la base de datos del pedido")
-                os.remove(MODIFICADO)
-                return
+    if not producto_encontrado:
+        print("ERROR: Producto no encontrado en la base de datos del pedido")
+        os.remove(MODIFICADO)
+        return
 
-            os.replace(MODIFICADO, nombre_a_orden)
-            print("Pedido Modificado")
-            return
+    os.replace(MODIFICADO, nombre_a_orden)
+    print("Pedido Modificado")
+    return
 
 def eliminar_ordenes(razon_social, nro_orden):
     orden_encontrada = False
