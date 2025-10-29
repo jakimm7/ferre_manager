@@ -4,7 +4,7 @@ from pdf_parser.pdf_parser import *
 from ventana_scrolleable import *
 from admin_pedido.admin_pedido import *
 
-def descontar_faltante(entrada, codigo, razon_social, nro_orden, faltantes_producto, etiqueta):
+def descontar_faltante(entrada, codigo, razon_social, nro_orden, faltantes_producto, etiqueta, widgets):
     stock = entrada.get()
     total_pedido = faltantes_producto[codigo]
 
@@ -24,6 +24,8 @@ def descontar_faltante(entrada, codigo, razon_social, nro_orden, faltantes_produ
 
     if faltante <= 0:
         messagebox.showinfo("Exito!", "Ya tenemos el stock del producto!")
+        for w in widgets:
+            w.destroy()
         return
 
     return
@@ -37,6 +39,7 @@ def entregar_orden(razon_social, nro_orden, widgets):
 
 def mostrar_producto(frame, codigo, razon_social, nro_orden, nombre_por_codigo, faltante_productos, client_widgets):
     producto, faltante = nombre_por_codigo[codigo], faltante_productos[codigo]
+    widgets = []
 
     e_producto = tk.Label(frame, text=f"PRODUCTO: {producto}", font=("Arial", 10))
     e_producto.pack(pady=10)
@@ -45,39 +48,47 @@ def mostrar_producto(frame, codigo, razon_social, nro_orden, nombre_por_codigo, 
     e_stock = tk.Label(frame, text=f"FALTAN {faltante} UNIDADE(S)", font=("Arial", 10))
     e_stock.pack(pady=10)
     client_widgets.append(e_stock)
-                    
+
     if int(faltante) > 0:
         entrada_stock = tk.Entry(frame, width=5)
         entrada_stock.pack(pady=5)
         client_widgets.append(entrada_stock)
+        widgets.append(entrada_stock)
 
         submit_button = tk.Button(frame, text="Descontar", command=lambda entrada=entrada_stock, codigo=codigo,razon_social=razon_social, 
-                                        nro_orden=nro_orden, faltantes_producto=faltante_productos, etiqueta=e_stock: 
-                                        descontar_faltante(entrada, codigo, razon_social, nro_orden, faltantes_producto, etiqueta))
+                                            nro_orden=nro_orden, faltantes_producto=faltante_productos, etiqueta=e_stock: 
+                                            descontar_faltante(entrada, codigo, razon_social, nro_orden, faltantes_producto, etiqueta, widgets))
+        widgets.append(submit_button)
         submit_button.pack(pady=5)
         client_widgets.append(submit_button)
 
-def mostrar_clientes(clientes, frame, widgets):
+
+def mostrar_clientes(clientes, frame, ventana_scroll, widgets):
     for cliente in clientes:
         razon_social, nro_orden = cliente[RAZON_SOCIAL], cliente[NRO_ORDEN]
         faltante_productos, nombre_por_codigo = leer_faltantes(razon_social, nro_orden)
         client_widgets = []
 
-        btn_entregar = tk.Button(frame, text="Entregar Pedido", command=lambda razon_social=razon_social,widgets=widgets,
+        cliente_frame = ventana_scroll.crear_caja_entidad(frame)
+        cliente_frame.pack(fill='x', pady=10, padx=20)
+        
+        client_widgets.append(cliente_frame) 
+
+        btn_entregar = tk.Button(cliente_frame, text="Entregar Pedido", command=lambda razon_social=razon_social,widgets=widgets,
                                     nro_orden=nro_orden: entregar_orden(razon_social, nro_orden, widgets))
         btn_entregar.pack(pady=5)
         client_widgets.append(btn_entregar)
 
-        e_razon = tk.Label(frame, text=razon_social, font=("Arial", 18, "bold"))
+        e_razon = tk.Label(cliente_frame, text=razon_social, font=("Arial", 18, "bold"))
         e_razon.pack()
         client_widgets.append(e_razon)
 
-        e_nro_orden = tk.Label(frame, text=F"Número de órden: {nro_orden}" ,font=("Arial", 14, "bold"))
+        e_nro_orden = tk.Label(cliente_frame, text=F"Número de órden: {nro_orden}" ,font=("Arial", 14, "bold"))
         e_nro_orden.pack()
         client_widgets.append(e_nro_orden)
 
         for codigo in faltante_productos.keys():
-            mostrar_producto(frame, codigo, razon_social, nro_orden, nombre_por_codigo, faltante_productos, client_widgets)
+            mostrar_producto(cliente_frame, codigo, razon_social, nro_orden, nombre_por_codigo, faltante_productos, client_widgets)
             widgets[(razon_social, nro_orden)] = client_widgets
 
 def volver_menu_principal(frame, ventana):
@@ -93,7 +104,7 @@ def handler_ordenes(clientes):
     e_instrucciones.pack()
     widgets = {}
 
-    mostrar_clientes(clientes, scrollable_frame, widgets)
+    mostrar_clientes(clientes, scrollable_frame, ventana_scroll, widgets)
 
     volver_button = tk.Button(scrollable_frame, text="Volver", command=lambda frame=scrollable_frame, ventana=ventana_scroll: 
                               volver_menu_principal(frame, ventana_scroll))
