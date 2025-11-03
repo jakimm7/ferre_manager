@@ -8,8 +8,8 @@ import sys
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) if not getattr(sys, 'frozen', False) else sys._MEIPASS
 BASE_DIR = os.path.abspath(os.path.dirname(sys.argv[0])) # Usar la ubicación real del .exe
 
-BDD_DIR = os.path.join(BASE_DIR, "bdd")
-os.makedirs(BDD_DIR, exist_ok=True)
+BDD_DIR = os.path.join(BASE_DIR, "bdd/pedidos_activos")
+# os.makedirs(BDD_DIR, exist_ok=True)
 
 RUTA = os.path.join(BDD_DIR, "pedido")
 RUTA_CLIENTES = os.path.join(BDD_DIR, "pedidos_totales.csv")

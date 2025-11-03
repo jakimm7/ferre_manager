@@ -147,6 +147,9 @@ def handler_procesos(archivos, manager, window, carga_archivos):
     manager.destruir()
     handler_ordenes(pedidos)
 
+def ver_historial():
+    return
+
 def menu_principal():    
     archivos_seleccionados = []
     manager = VentanaScrollable("Inicio", 600, 500)
@@ -166,6 +169,9 @@ def menu_principal():
 
     btn_cargar_pendientes = tk.Button(main_window, text="Cargar Pendiente(s)", command=lambda: handler_procesos(archivos_seleccionados, manager, main_window, False))
     btn_cargar_pendientes.pack(pady=10)
+
+    btn_historial =  tk.Button(main_window, text="Historial de pedidos", command= lambda: ver_historial())
+    btn_historial.pack(pady=10)
 
     main_window.mainloop()
 
