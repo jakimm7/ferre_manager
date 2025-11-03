@@ -23,31 +23,30 @@ MODO_APPEND = "a"
 
 CODIGO = 0
 PRODUCTO = 1
-CANT_PEDIDA = 2
+CANTIDAD = 2
 RAZON = 3
 
 RAZON_SOCIAL = 0
 ORDEN = 1
 
-def leer_faltantes(razon_social, numero_orden):
+def leer_cantidades(razon_social, numero_orden):
     nombre_a_orden = f"{NOM_GENERICO_ACT}_{razon_social}_{numero_orden}{EXTENSION}"
     with open(nombre_a_orden, MODO_LECTURA) as pedido_file:    
-        faltante_productos = {}
-        nombre_por_codigo = {}
+        cantidades_solicitadas, nombre_por_codigo = {}, {}
         pedido_reader = csv.reader(pedido_file, delimiter=",")
         for pedido in pedido_reader:
             if len(pedido) == 0:
                 continue
+
             codigo = int(pedido[CODIGO])
             nombre = pedido[PRODUCTO]
-            cant_pedida = pedido[CANT_PEDIDA]
+            cantidad = int(pedido[CANTIDAD])
 
-            faltante_productos[codigo] = cant_pedida
+            cantidades_solicitadas[codigo] = cantidad
             if codigo not in nombre_por_codigo.keys():
                 nombre_por_codigo[codigo] = nombre
 
-        pedido_file.close()
-        return faltante_productos, nombre_por_codigo
+        return cantidades_solicitadas, nombre_por_codigo
 
 def administrar_faltantes(codigo_producto, unidades_faltantes, razon_social, numero_orden):
     nombre_a_orden = f"{NOM_GENERICO_ACT}_{razon_social}_{numero_orden}{EXTENSION}"
@@ -62,7 +61,7 @@ def administrar_faltantes(codigo_producto, unidades_faltantes, razon_social, num
                     continue
                 codigo = int(pedido[CODIGO])
                 producto = pedido[PRODUCTO]
-                stock = int(pedido[CANT_PEDIDA])
+                stock = int(pedido[CANTIDAD])
 
                 if codigo == codigo_producto:
                     stock = unidades_faltantes
@@ -111,12 +110,13 @@ def eliminar_ordenes(razon_social, nro_orden):
     os.replace(AUX, RUTA_TOTALES)
     os.replace(AUX2, RUTA_FINALIZADOS)       
 
-def cargar_ordenes(clientes):
-    with open(RUTA_TOTALES, MODO_LECTURA) as totales_file:
-        totales_file_reader = csv.reader(totales_file, delimiter=',')
-        for pedido in totales_file_reader:
+def cargar_pedidos_bdd(pedidos, ruta):
+    with open(ruta, MODO_LECTURA) as pedidos_file:
+        reader = csv.reader(pedidos_file, delimiter=',')
+        for pedido in reader:
             if len(pedido) == 0:
                 continue
+
             cliente = pedido[RAZON_SOCIAL]
             orden = pedido[ORDEN]
-            clientes.append((cliente, orden))
+            pedidos.append((cliente, orden))

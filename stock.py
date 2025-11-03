@@ -4,6 +4,15 @@ from pdf_parser.pdf_parser import *
 from ventana_manager.ventana_scrolleable import *
 from admin_pedido.admin_pedido import *
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__)) if not getattr(sys, 'frozen', False) else sys._MEIPASS
+BASE_DIR = os.path.abspath(os.path.dirname(sys.argv[0]))
+
+BDD_DIR_ACTIVOS = os.path.join(BASE_DIR, "bdd/pedidos_activos")
+BDD_DIR_FIN = os.path.join(BASE_DIR, "bdd/pedidos_finalizados")
+
+RUTA_TOTALES = os.path.join(BDD_DIR_ACTIVOS, "pedidos_totales.csv")
+RUTA_FINALIZADOS = os.path.join(BDD_DIR_FIN, "pedidos_finalizados.csv")
+
 def descontar_faltante(entrada, codigo, razon_social, nro_orden, faltantes_producto, etiqueta, widgets):
     stock = entrada.get()
     total_pedido = faltantes_producto[codigo]
@@ -41,32 +50,36 @@ def mostrar_producto(frame, codigo, razon_social, nro_orden, nombre_por_codigo, 
     producto, faltante = nombre_por_codigo[codigo], faltante_productos[codigo]
     widgets = []
 
-    e_producto = tk.Label(frame, text=f"PRODUCTO: {producto}", font=("Arial", 10))
-    e_producto.pack(pady=10)
+    producto_linea_frame = tk.Frame(frame)
+    producto_linea_frame.pack(fill='x', padx=10, pady=2)
+    client_widgets.append(producto_linea_frame)
+
+    e_producto = tk.Label(producto_linea_frame, text=f"{producto}", font=("Arial", 10))
+    e_producto.pack(side='left', padx=5)
     client_widgets.append(e_producto)
 
-    e_stock = tk.Label(frame, text=f"FALTAN {faltante} UNIDADE(S)", font=("Arial", 10))
-    e_stock.pack(pady=10)
+    e_stock = tk.Label(producto_linea_frame, text=f"FALTAN {faltante} UNIDADE(S)", font=("Arial", 10))
+    e_stock.pack(side='left', pady=5)
     client_widgets.append(e_stock)
 
     if int(faltante) > 0:
-        entrada_stock = tk.Entry(frame, width=5)
-        entrada_stock.pack(pady=5)
+        entrada_stock = tk.Entry(producto_linea_frame, width=5)
+        entrada_stock.pack(side='left', pady=5)
         client_widgets.append(entrada_stock)
         widgets.append(entrada_stock)
 
-        submit_button = tk.Button(frame, text="Descontar", command=lambda entrada=entrada_stock, codigo=codigo,razon_social=razon_social, 
+        submit_button = tk.Button(producto_linea_frame, text="Descontar", command=lambda entrada=entrada_stock, codigo=codigo,razon_social=razon_social, 
                                             nro_orden=nro_orden, faltantes_producto=faltante_productos, etiqueta=e_stock: 
                                             descontar_faltante(entrada, codigo, razon_social, nro_orden, faltantes_producto, etiqueta, widgets))
         widgets.append(submit_button)
-        submit_button.pack(pady=5)
+        submit_button.pack(side='left', pady=10)
         client_widgets.append(submit_button)
 
 
 def mostrar_clientes(clientes, frame, ventana_scroll, widgets):
     for cliente in clientes:
         razon_social, nro_orden = cliente[RAZON_SOCIAL], cliente[NRO_ORDEN]
-        faltante_productos, nombre_por_codigo = leer_faltantes(razon_social, nro_orden)
+        cantidades_solicitadas, nombre_por_codigo = leer_cantidades(razon_social, nro_orden)
         client_widgets = []
 
         cliente_frame = ventana_scroll.crear_caja_entidad(frame)
@@ -87,8 +100,8 @@ def mostrar_clientes(clientes, frame, ventana_scroll, widgets):
         e_nro_orden.pack()
         client_widgets.append(e_nro_orden)
 
-        for codigo in faltante_productos.keys():
-            mostrar_producto(cliente_frame, codigo, razon_social, nro_orden, nombre_por_codigo, faltante_productos, client_widgets)
+        for codigo in cantidades_solicitadas.keys():
+            mostrar_producto(cliente_frame, codigo, razon_social, nro_orden, nombre_por_codigo, cantidades_solicitadas, client_widgets)
             widgets[(razon_social, nro_orden)] = client_widgets
 
 def volver_menu_principal(frame, ventana):
@@ -97,7 +110,7 @@ def volver_menu_principal(frame, ventana):
     menu_principal()
 
 def handler_ordenes(clientes):
-    ventana_scroll = VentanaScrollable("Pedidos Totales", 500, 600)
+    ventana_scroll = VentanaScrollable("Pedidos Totales", 700, 800)
     scrollable_frame = ventana_scroll.get_frame()
 
     e_instrucciones = tk.Label(scrollable_frame, text="Ingresa en la caja la cantidad de unidades en stock de c/producto\n", wraplength=400, font=("Arial", 15, "italic"))
@@ -124,7 +137,7 @@ def adjuntar_archivo(archivos_seleccionados):
 
 def handler_procesos(archivos, manager, window, carga_archivos):
     pedidos = []
-    cargar_ordenes(pedidos)
+    cargar_pedidos_bdd(pedidos, RUTA_TOTALES)
 
     if carga_archivos:
         if len(archivos) == 0:
@@ -147,8 +160,13 @@ def handler_procesos(archivos, manager, window, carga_archivos):
     manager.destruir()
     handler_ordenes(pedidos)
 
-def ver_historial():
-    return
+def ver_historial(window, manager):
+    pedidos_finalizados = []
+    cargar_pedidos_bdd(pedidos_finalizados, RUTA_FINALIZADOS)
+
+    window.destroy()
+    manager.destruir()
+    handler_ordenes(pedidos_finalizados)
 
 def menu_principal():    
     archivos_seleccionados = []
@@ -170,7 +188,7 @@ def menu_principal():
     btn_cargar_pendientes = tk.Button(main_window, text="Cargar Pendiente(s)", command=lambda: handler_procesos(archivos_seleccionados, manager, main_window, False))
     btn_cargar_pendientes.pack(pady=10)
 
-    btn_historial =  tk.Button(main_window, text="Historial de pedidos", command= lambda: ver_historial())
+    btn_historial =  tk.Button(main_window, text="Historial de pedidos", command= lambda: ver_historial(main_window, manager))
     btn_historial.pack(pady=10)
 
     main_window.mainloop()
