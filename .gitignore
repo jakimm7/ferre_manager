@@ -1,0 +1,22 @@
+# Archivos de caché del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Directorios de dependencias de Node.js (ejemplo)
+node_modules/
+
+# Archivos de compilación de Python
+__pycache__/
+*.py[cod]
+
+# Entornos virtuales de Python
+.venv/
+venv/
+env/
+
+# Archivos de logs
+*.log
+npm-debug.log*
+
+# Archivos de entorno y configuración sensible
+.env
