@@ -50,33 +50,38 @@ def leer_cantidades(razon_social, numero_orden):
 
 def administrar_faltantes(codigo_producto, unidades_faltantes, razon_social, numero_orden):
     nombre_a_orden = f"{NOM_GENERICO_ACT}_{razon_social}_{numero_orden}{EXTENSION}"
-    with open(nombre_a_orden, MODO_LECTURA) as pedido_file:
-        with open(MODIFICADO, MODO_ESCRITURA) as pedido_mod_file:
-            pedido_reader = csv.reader(pedido_file, delimiter=",")
-            modificado_writer = csv.writer(pedido_mod_file, delimiter=",")
-            producto_encontrado = False
+    try:
+        with open(nombre_a_orden, MODO_LECTURA) as pedido_file:
+            with open(MODIFICADO, MODO_ESCRITURA) as pedido_mod_file:
+                pedido_reader = csv.reader(pedido_file, delimiter=",")
+                modificado_writer = csv.writer(pedido_mod_file, delimiter=",")
+                producto_encontrado = False
 
-            for pedido in pedido_reader:
-                if len(pedido) == 0:
-                    continue
-                codigo = int(pedido[CODIGO])
-                producto = pedido[PRODUCTO]
-                stock = int(pedido[CANTIDAD])
+                for pedido in pedido_reader:
+                    if len(pedido) == 0:
+                        continue
 
-                if codigo == codigo_producto:
-                    stock = unidades_faltantes
-                    producto_encontrado = True
-            
-                modificado_writer.writerow([codigo, producto, stock])
+                    codigo = int(pedido[CODIGO])
+                    producto = pedido[PRODUCTO]
+                    stock = int(pedido[CANTIDAD])
 
+                    if codigo == codigo_producto:
+                        stock = unidades_faltantes
+                        producto_encontrado = True
+                
+                    modificado_writer.writerow([codigo, producto, stock])
+    except:
+        print(f"ERROR: Archivo en la ubicación {nombre_a_orden} no encontrado")
+        return None
+    
     if not producto_encontrado:
-        print("ERROR: Producto no encontrado en la base de datos del pedido")
+        print(f"ERROR: Codigo {codigo_producto} del producto no encontrado en la base de datos del pedido")
         os.remove(MODIFICADO)
-        return
+        return None
 
     os.replace(MODIFICADO, nombre_a_orden)
     print("Pedido Modificado")
-    return
+    return True
 
 def eliminar_ordenes(razon_social, nro_orden):
     orden_encontrada = False
