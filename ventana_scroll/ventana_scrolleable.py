@@ -44,7 +44,6 @@ class VentanaScrollable:
     def _on_canvas_resize(self, event):
         """Ajustar el ancho del scrollable_frame al ancho del Canvas."""
         canvas_width = event.width
-        # Aseguramos que el frame interno tome el ancho del canvas para centrar
         self.canvas.itemconfigure(self.frame_id, width=canvas_width) 
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
@@ -67,9 +66,9 @@ class VentanaScrollable:
         """
         caja = tk.Frame(
             parent_frame,
-            relief=tk.RIDGE,      # Estilo de borde: RIDGE (levantado) o GROOVE (hundido)
-            borderwidth=2,        # Grosor del borde en píxeles
-            padx=10,              # Padding interno horizontal
-            pady=10,              # Padding interno vertical
+            relief=tk.RIDGE,      
+            borderwidth=2,        
+            padx=10,              
+            pady=10,             
         )
         return caja
